@@ -1,3 +1,4 @@
+import asyncio
 from abc import abstractmethod
 from copy import deepcopy
 from typing import Dict, List, Optional, Tuple, Union
@@ -189,16 +190,20 @@ class BaseModel:
 
     def generate_from_template(self, templates: List[PromptType],
                                max_out_len: int, **kwargs):
-        """Generate completion from a list of templates.
-
-        Args:
-            templates (List[PromptType]): A list of templates.
-            max_out_len (int): The maximum length of the output.
-        """
+        """Generate completion from a list of templates."""
         inputs = self.parse_template(templates, mode='gen')
         if hasattr(self, 'sync_rank') and self.sync_rank:
             inputs = self.sync_inputs(inputs)
-        return self.generate(inputs, max_out_len=max_out_len, **kwargs)
+
+        # Get the current event loop or create a new one
+        loop = asyncio.get_event_loop()
+        if loop.is_closed():
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        # Run the async function in the event loop
+        return loop.run_until_complete(
+            self.generate(inputs, max_out_len=max_out_len, **kwargs))
 
     def get_token_len_from_template(
             self,

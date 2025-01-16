@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 import random
@@ -10,6 +11,7 @@ from typing import Dict, List, Optional, Union
 import httpx
 import jieba
 import requests
+from openai import AsyncOpenAI
 from tqdm import tqdm
 
 from opencompass.registry import MODELS
@@ -186,7 +188,7 @@ class OpenAI(BaseAPIModel):
         """Generate results given a list of inputs.
 
         Args:
-            inputs (PromptType): A string or PromptDict.
+            input (PromptType): A string or PromptDict.
                 The PromptDict should be organized in OpenCompass'
                 API format.
             max_out_len (int): The maximum length of the output.
@@ -261,7 +263,6 @@ class OpenAI(BaseAPIModel):
                 key = self.keys[self.key_ctr]
 
             header = {
-                'Authorization': f'Bearer {key}',
                 'content-type': 'application/json',
                 'api-key': key,
             }
@@ -537,8 +538,27 @@ class OpenAISDK(OpenAI):
             self.logger.info(f'Used openai_client: {self.openai_client}')
         self.status_code_mappings = status_code_mappings
 
-    def _generate(self, input: PromptList | str, max_out_len: int,
-                  temperature: float) -> str:
+    async def generate(self,
+                       inputs: List[PromptType],
+                       max_out_len: int = 512,
+                       temperature: float = 0.7,
+                       **kwargs) -> List[str]:
+
+        if self.temperature is not None:
+            temperature = self.temperature
+
+        tasks = [
+            self._generate(prompt, max_out_len, temperature, idx)
+            for idx, prompt in enumerate(inputs)
+        ]
+        responses = await asyncio.gather(*tasks)
+        ordered_responses = [
+            resp for _, resp in sorted(responses, key=lambda x: x[0])
+        ]
+        return ordered_responses
+
+    async def _generate(self, input: PromptList | str, max_out_len: int,
+                        temperature: float, index: int) -> tuple:
         from openai import APIStatusError, BadRequestError
         assert isinstance(input, (str, PromptList))
 
@@ -587,34 +607,43 @@ class OpenAISDK(OpenAI):
         while num_retries < self.retry:
             self.wait()
 
-            if self.path in O1_MODEL_LIST:
-                self.logger.warning(
-                    f"'max_token' is unsupported for model {self.path}")
-                self.logger.warning(
-                    f'We use max_completion_tokens: '
-                    f'{self.max_completion_tokens}for this query')
-                query_data = dict(
-                    model=self.path,
-                    max_completion_tokens=self.max_completion_tokens,
-                    n=1,
-                    messages=messages,
-                    extra_body=self.extra_body,
-                )
-            else:
-                query_data = dict(
-                    model=self.path,
-                    max_tokens=max_out_len,
-                    n=1,
-                    temperature=self.temperature,
-                    messages=messages,
-                    extra_body=self.extra_body,
-                )
+            # if self.path in O1_MODEL_LIST:
+            #     self.logger.warning(
+            #         f"'max_token' is unsupported for model {self.path}")
+            #     self.logger.warning(
+            #         f'We use max_completion_tokens: '
+            #         f'{self.max_completion_tokens}for this query')
+            #     query_data = dict(
+            #         model=self.path,
+            #         max_completion_tokens=self.max_completion_tokens,
+            #         n=1,
+            #         messages=messages,
+            #         extra_body=self.extra_body,
+            #     )
+            # else:
+            #     query_data = dict(
+            #         model=self.path,
+            #         max_tokens=max_out_len,
+            #         n=1,
+            #         temperature=self.temperature,
+            #         messages=messages,
+            #         extra_body=self.extra_body,
+            #     )
 
             try:
+                client = AsyncOpenAI(base_url='http://0.0.0.0:8000/v1',
+                                     api_key='dummy')
+
                 if self.verbose:
                     self.logger.info('Start calling OpenAI API')
-                responses = self.openai_client.chat.completions.create(
-                    **query_data)
+                # responses = self.openai_client.chat.completions.create(
+                #     **query_data)
+
+                responses = await client.chat.completions.create(
+                    model=self.path,
+                    messages=messages,
+                    max_tokens=max_out_len,
+                    temperature=1)
                 if self.verbose:
                     self.logger.info(
                         'Successfully get response from OpenAI API')
@@ -626,7 +655,7 @@ class OpenAISDK(OpenAI):
                     self.logger.error(
                         'Response is empty, it is an internal server error \
                             from the API provider.')
-                return responses.choices[0].message.content
+                return index, responses.choices[0].message.content
 
             except (BadRequestError, APIStatusError) as e:
                 # Handle BadRequest status
