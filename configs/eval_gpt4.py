@@ -1,9 +1,9 @@
-from dotenv import load_dotenv
 from mmengine.config import read_base
 from opencompass.models import OpenAI, OpenAISDK
 from opencompass.partitioners import NaivePartitioner
 from opencompass.runners import LocalRunner
 from opencompass.tasks import OpenICLInferTask
+from os import getenv
 
 with read_base():
     from opencompass.configs.datasets.collections.x_51 import datasets
@@ -21,9 +21,13 @@ api_meta_template = dict(
     ],
 )
 
+model_name = getenv('EVAL_MODEL_NAME')
+if model_name is None:
+    raise ValueError('Please set the model name in the environment variable EVAL_MODEL_URL')
+
 models = [
-    dict(abbr='Qwen/QwQ-32B-Preview',
-        type=OpenAISDK, path='Qwen/QwQ-32B-Preview',
+    dict(abbr=model_name,
+        type=OpenAISDK, path=model_name,
         key='8o30OElfDYV_D6YbbznT0A:GDC2BsXIfSdfjv9iWka3V4MkazpvHfe0cCwXohzbP0Q',  # The key will be obtained from $OPENAI_API_KEY, but you can write down your key here as well
         meta_template=api_meta_template,
         query_per_second=100,

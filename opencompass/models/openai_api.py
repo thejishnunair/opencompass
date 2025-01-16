@@ -26,6 +26,12 @@ OPENAI_API_BASE = os.path.join(
 OPENAISDK_API_BASE = os.environ.get('OPENAI_BASE_URL',
                                     'https://api.openai.com/v1/')
 
+MODEL_URL = os.getenv('EVAL_MODEL_URL')
+if MODEL_URL is None:
+    raise ValueError(
+        'Please set the model url in the environment variable EVAL_MODEL_URL')
+API_KEY = os.getenv('EVAL_API_KEY', 'dummy')
+
 O1_MODEL_LIST = [
     'o1-preview-2024-09-12',
     'o1-mini-2024-09-12',
@@ -631,8 +637,8 @@ class OpenAISDK(OpenAI):
             #     )
 
             try:
-                client = AsyncOpenAI(base_url='http://0.0.0.0:8000/v1',
-                                     api_key='dummy')
+
+                client = AsyncOpenAI(base_url=MODEL_URL, api_key=API_KEY)
 
                 if self.verbose:
                     self.logger.info('Start calling OpenAI API')
