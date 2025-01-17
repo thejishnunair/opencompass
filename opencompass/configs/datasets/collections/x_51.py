@@ -35,7 +35,7 @@ with read_base():
   from opencompass.configs.datasets.livecodebench.livecodebench_gen_a4f90b import (
     LCBCodeGeneration_dataset,
   )
-  from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
+  #from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
 
 #     pass
     # if enable_gsm8k:
