@@ -6,12 +6,12 @@ from opencompass.tasks import OpenICLInferTask
 from os import getenv
 
 with read_base():
-    from opencompass.configs.datasets.collections.x_51 import datasets, summarizer
+    from opencompass.configs.datasets.collections.x_51 import datasets
 # GPT4 needs a special humaneval postprocessor
-from opencompass.datasets.humaneval import humaneval_gpt_postprocess
+from opencompass.datasets.humaneval import humaneval_internal_v1_postprocess
 for _dataset in datasets:
     if _dataset['path'] == 'openai_humaneval':
-        _dataset['eval_cfg']['pred_postprocessor']['type'] = humaneval_gpt_postprocess
+        _dataset['eval_cfg']['pred_postprocessor']['type'] = humaneval_internal_v1_postprocess
 
 
 api_meta_template = dict(

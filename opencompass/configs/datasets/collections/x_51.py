@@ -28,15 +28,14 @@ with read_base():
   from ..hellaswag.hellaswag_10shot_gen_e42710 import hellaswag_datasets
   from ..drop.drop_openai_simple_evals_gen_3857b0 import drop_datasets
   from ..aime2024.aime2024_gen_6e39a4 import aime2024_datasets
-  from ..math.math_gen_265cce import math_datasets
-  from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
+  from ..math.math_prm800k_500_0shot_cot_gen import (
+      math_datasets,
+  )
   from ..IFEval.IFEval_gen_3321a3 import ifeval_datasets
   from opencompass.configs.datasets.livecodebench.livecodebench_gen_a4f90b import (
     LCBCodeGeneration_dataset,
   )
-  from ..math.math_prm800k_500_0shot_cot_gen import (
-    math_datasets,
-  )
+  from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
 
 #     pass
     # if enable_gsm8k:
