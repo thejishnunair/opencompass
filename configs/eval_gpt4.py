@@ -6,7 +6,7 @@ from opencompass.tasks import OpenICLInferTask
 from os import getenv
 
 with read_base():
-    from opencompass.configs.datasets.collections.x_51 import datasets
+    from opencompass.configs.datasets.collections.x_51 import datasets, summarizer
 # GPT4 needs a special humaneval postprocessor
 from opencompass.datasets.humaneval import humaneval_gpt_postprocess
 for _dataset in datasets:
