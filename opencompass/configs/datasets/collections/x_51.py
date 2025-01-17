@@ -22,7 +22,6 @@ from mmengine import read_base
 with read_base():
   from ..gsm8k.gsm8k_gen_1d7fe4 import gsm8k_datasets
   from ..mmlu.mmlu_gen_4d595a import mmlu_datasets
-  from ..cmmlu.cmmlu_gen_c13365 import cmmlu_datasets
   from ..mmlu_pro.mmlu_pro_0shot_cot_gen_08c1de import mmlu_pro_datasets
   from ..gpqa.gpqa_openai_simple_evals_gen_5aeece import gpqa_datasets
   from ..hellaswag.hellaswag_10shot_gen_e42710 import hellaswag_datasets
