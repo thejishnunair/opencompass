@@ -3,16 +3,16 @@ import os
 from mmengine import read_base
 
 with read_base():
-  # from ..gsm8k.gsm8k_gen_1d7fe4 import gsm8k_datasets
-  # from ..mmlu.mmlu_gen_4d595a import mmlu_datasets
-  # from ..mmlu_pro.mmlu_pro_0shot_cot_gen_08c1de import mmlu_pro_datasets
-  # from ..gpqa.gpqa_openai_simple_evals_gen_5aeece import gpqa_datasets
-  # from ..hellaswag.hellaswag_10shot_gen_e42710 import hellaswag_datasets
-  # from ..drop.drop_openai_simple_evals_gen_3857b0 import drop_datasets
-  # from ..aime2024.aime2024_gen_6e39a4 import aime2024_datasets
-  # from ..math.math_prm800k_500_0shot_cot_gen import (
-  #     math_datasets,
-  # )
+  from ..gsm8k.gsm8k_gen_1d7fe4 import gsm8k_datasets
+  from ..mmlu.mmlu_gen_4d595a import mmlu_datasets
+  from ..mmlu_pro.mmlu_pro_0shot_cot_gen_08c1de import mmlu_pro_datasets
+  from ..gpqa.gpqa_openai_simple_evals_gen_5aeece import gpqa_datasets
+  from ..hellaswag.hellaswag_10shot_gen_e42710 import hellaswag_datasets
+  from ..drop.drop_openai_simple_evals_gen_3857b0 import drop_datasets
+  from ..aime2024.aime2024_gen_6e39a4 import aime2024_datasets
+  from ..math.math_prm800k_500_0shot_cot_gen import (
+      math_datasets,
+  )
   from ..IFEval.IFEval_gen_3321a3 import ifeval_datasets
   from opencompass.configs.datasets.livecodebench.livecodebench_gen_a4f90b import (
     LCBCodeGeneration_dataset,
