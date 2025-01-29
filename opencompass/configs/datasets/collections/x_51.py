@@ -13,17 +13,17 @@ with read_base():
   from ..math.math_prm800k_500_0shot_cot_gen import (
       math_datasets,
   )
-  from ..IFEval.IFEval_gen_3321a3 import ifeval_datasets
-  from opencompass.configs.datasets.livecodebench.livecodebench_gen_a4f90b import (
-    LCBCodeGeneration_dataset,
-  )
-  from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
+  # from ..IFEval.IFEval_gen_3321a3 import ifeval_datasets
+  # from opencompass.configs.datasets.livecodebench.livecodebench_gen_a4f90b import (
+  #   LCBCodeGeneration_dataset,
+  # )
+  # from ..humaneval.humaneval_openai_sample_evals_gen_dcae0e import humaneval_datasets
 
 
 
 datasets = sum(
     (v for k, v in locals().items() if k.endswith('_datasets')), []
-)  + [LCBCodeGeneration_dataset]
+)  # + [LCBCodeGeneration_dataset]
 
 core_summary_groups = [
     {
